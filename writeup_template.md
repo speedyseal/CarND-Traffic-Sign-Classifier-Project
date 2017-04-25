@@ -126,7 +126,9 @@ If a well known architecture was chosen:
 * Why did you believe it would be relevant to the traffic sign application?
 * How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
  
-I chose the LeNet-5 because I think the data set is too small for a deeper, more state of the art net such as VGG or resnet. I am already seeing overfitting on LeNet-5 and I think larger nets will also be quite overfitted. The larger nets tend to be used on large pretrained data sets and then fine tuned on the application set. The advice is "don't be a hero" trying to invent new architectures. I see this as more of an exercise in preparing the data for classification. LeNet works well on images of this size. Some tweaks could be made to account for the increased number of classes vs. MNIST and the usage of 3 color channels. However increasing the number of parameters increases the likelihood of overfitting.
+I chose the LeNet-5 because I think the data set is too small for a deeper, state of the art net such as VGG or resnet. I am already seeing overfitting on LeNet-5 and I think larger nets will also be quite overfitted. The larger nets tend to be used on large pretrained data sets and then fine tuned on the application set. The advice is "don't be a hero" trying to invent new architectures. I see this as more of an exercise in preparing  data statistics for classification. LeNet works well on images of this size. Some tweaks could be made to account for the increased number of classes vs. MNIST and the usage of 3 color channels. However increasing the number of parameters increases the likelihood of overfitting.
+
+The good match between training and validation sets indicating low overfitting on these two sets, however, the convnet is still overfitted to the combination of these two sets as indicated by the lower accuracy on the test set. More work could be done trying to reduce overfitting.
 
 
 ###Test a Model on New Images
@@ -150,14 +152,14 @@ Here are the results of the prediction:
 | Children crossing     | Children crossing 							|
 | Ahead only			| Ahead only									|
 | Keep right      		| Keep right					 				|
-| Speed limit 70km/h	| Speed limit 70km/h      						|
+| Speed limit 70km/h	| General caution      						|
 
 
-The model was able to correctly guess 5 of the 5 traffic signs, which gives an accuracy of 100%. This is similar to the accuracy on the test set. The augmentation involving shear and rotations may have given enough training data to cover the examples found on the web.
+The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. The quality of speed signs data in the training set may be quite noisy, therefore the classifier may have been unable to find separation between the classes and instead sees the red circle outline, interpreting it as general caution.
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+The code for making predictions on my final model is located in the 25th cell of the Ipython notebook.
 
 For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
 
@@ -169,15 +171,32 @@ For the first image, the model is relatively sure that this is a stop sign (prob
 | .0	      			| Dangerous curve to right		 				|
 | .0				    | Road narrows on right      					|
 
-For the second image.
+For the second image, it somehow got very confused. The distorted circle looks more like an oval and the classifier is matching it more towards triangular signs than circular signs.
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| 1.00         			| Speed limit 70km/h   							| 
-| .0     				| Speed limit 30km/h 							|
-| .0					| Speed limit 30km/h							|
-| .0	      			| Dangerous curve to right		 				|
-| .0				    | Road narrows on right      					|
+| 0.51         			| General caution   							| 
+| 0.48     				| Traffic signals 							|
+| .005					| speed limit 70km/h							|
+| .004	      			| No vehicles		 				|
+| .002				    | Pedestrians      					|
+
+For the keep right sign, Bumpy road, and ahead only, the classifier is very sure about its predictions. The secondary softmax probabilities are smaller than 1e-5.
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.0         			| Keep right   							| 
+
+
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.0         			| Bumpy road   							| 
+
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.0         			| Ahead only   							| 
 
 
 ####4. Confusion matrix
@@ -186,7 +205,9 @@ Another standard metric for evaluating a classifier is the confusion matrix. Pan
 
 ![alt text][confusionmatrix]
 
+
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
+
 ####1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
 
 The activations of the first convolutional layer show what features are highlighted. Salient features that cause activations are the outlines of the signs, indicating some kind of edge detection filter learned by the convnet.
