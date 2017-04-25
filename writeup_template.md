@@ -84,6 +84,9 @@ To add more data to the the data set, I used Keras' image generation function to
 
 I use the randomly transformed images to augment each class independently until each of the classes has an equal total number of samples. The number of samples per class in the training set can be specified as a parameter.
 
+This image shows samples from the original set next to samples from the augmented set.
+![alt text][stopaugmented]
+
 The difference between the original data set and the augmented data set is illustrated in the following histogram showing that all classes have more or less the same number of samples each.
 ![alt text][postbalancehist]
 
