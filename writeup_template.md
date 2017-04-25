@@ -12,21 +12,17 @@ The goals / steps of this project are the following:
 
 
 [//]: # (Image References)
-
 [traininghist]: ./p2img/traininghist.png "Training set histogram"
 [validhist]: ./p2img/validhist.png "Validation set histogram"
 [testhist]: ./p2img/testhist.png "Test set histogram"
 [postbalancehist]: ./p2img/postbalancehist.png "Training set histogram after balancing"
 [stoppreprocessed]: ./p2img/stoppreprocessed.png "Preprocessed stop sign from original set"
 [stopaugmented]: ./p2img/stopaugmented.png "Stop sign from augmented set showing zoom and rotation"
-
-
 [image4]: ./webimages/c22.png "Bumpy road"
 [image5]: ./webimages/c28.png "Children crossing"
 [image6]: ./webimages/c35.png "Ahead only"
 [image7]: ./webimages/c38.png "Keep right"
 [image8]: ./webimages/c4.png "Speed limit 70km/h"
-
 [confusionmatrix]: ./p2img/confusionmatrix.png "Confusion matrix"
 
 ## Rubric Points
@@ -55,8 +51,6 @@ signs data set:
 ####2. Include an exploratory visualization of the dataset.
 
 Here is an exploratory visualization of the data set. Plotted here are the class histograms for the training, validation, and test sets showing the disparity between class frequencies. Classes with greater representation will have a greater weight in training unless the frequency is balanced across classes. There are various techniques to deal with this. [http://www.ele.uri.edu/faculty/he/PDFfiles/ImbalancedLearning.pdf](http://www.ele.uri.edu/faculty/he/PDFfiles/ImbalancedLearning.pdf)
-
-![alt text][image1]
 
 ###Design and Test a Model Architecture
 
@@ -180,7 +174,8 @@ For the first image, the model is relatively sure that this is a stop sign (prob
 | .0	      			| Dangerous curve to right		 				|
 | .0				    | Road narrows on right      					|
 
-For the second image ... 
+For the second image.
+
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
 | 1.00         			| Speed limit 70km/h   							| 
