@@ -18,11 +18,11 @@ The goals / steps of this project are the following:
 [postbalancehist]: ./p2img/postbalancehist.png "Training set histogram after balancing"
 [stoppreprocessed]: ./p2img/stoppreprocessed.png "Preprocessed stop sign from original set"
 [stopaugmented]: ./p2img/stopaugmented.png "Stop sign from augmented set showing zoom and rotation"
-[image4]: ./webimages/c22.png "Bumpy road"
-[image5]: ./webimages/c28.png "Children crossing"
-[image6]: ./webimages/c35.png "Ahead only"
-[image7]: ./webimages/c38.png "Keep right"
-[image8]: ./webimages/c4.png "Speed limit 70km/h"
+[image4]: ./webimages/c22.jpg "Bumpy road"
+[image5]: ./webimages/c28.jpg "Children crossing"
+[image6]: ./webimages/c35.jpg "Ahead only"
+[image7]: ./webimages/c38.jpg "Keep right"
+[image8]: ./webimages/c4.jpg "Speed limit 70km/h"
 [confusionmatrix]: ./p2img/confusionmatrix.png "Confusion matrix"
 
 ## Rubric Points
