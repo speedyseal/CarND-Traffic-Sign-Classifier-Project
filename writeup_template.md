@@ -70,18 +70,13 @@ As a last step, I normalized the image data because it improves convergence.
 I decided to generate additional data because I have poor validation accuracy on the underrepresented classes and the gap between training and validation indicates that the convnet is overfitting to the existing training set.
 
 To add more data to the the data set, I used Keras' image generation function to randomly
- - rotate up to 10$\text{\textdegree}$
- - skew up to 3$\text{\textdegree}$
+ - rotate up to 10 deg
+ - skew up to 3 deg
  - zoom up to 5%
  - shift horizontally and vertically up to 10%
  - randomly shift channel data by 2
 
 I use the randomly transformed images to augment each class independently until each of the classes has an equal total number of samples. The number of samples per class in the training set can be specified as a parameter.
-
-Here is an example of an original image and an augmented image:
-
-![alt text][stoppreprocessed] ![alt text][stopaugmented]
-
 
 The difference between the original data set and the augmented data set is illustrated in the following histogram showing that all classes have more or less the same number of samples each.
 ![alt text][postbalancehist]
@@ -93,40 +88,41 @@ My final model consisted of the following layers:
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
 | Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
+| Convolution 5x5     	| 1x1 stride, valid padding, outputs 28x28x6 	|
 | RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
+| Max pooling	      	| 2x2 stride,  outputs 14x14x6  				|
+| Convolution 5x5	    | 1x1 stride, valid padding, output 10x10x16	|
+| RELU					|												|
+| Max pooling	      	| 2x2 stride,  outputs 5x5x16  					|
+| Fully connected		| input 400, output 120							|
+| RELU					|												|
+| Fully connected		| input 120, output 84							|
+| RELU					|												|
+| dropout				| keep prob=0.5									|
+| Fully connected		| input 84, output 42							|
+| Softmax				|         										|
  
 
 
 ####3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
-To train the model, I used an ....
+To train the model, I used AdamOptimizer with a rate of 0.001, L2 regularization on the fully connected weights with a strength of 0.001, batch size 128 and 40 epochs.
 
 ####4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
-
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+* training set accuracy of 99%
+* validation set accuracy of 97%
+* test set accuracy of 93%
 
 If a well known architecture was chosen:
 * What architecture was chosen?
 * Why did you believe it would be relevant to the traffic sign application?
 * How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
  
+I chose the LeNet-5 because I think the data set is too small for a deeper, more state of the art net such as VGG or resnet. I am already seeing overfitting on LeNet-5 and I think larger nets will also be quite overfitted. The larger nets tend to be used on large pretrained data sets and then fine tuned on the application set. The advice is "don't be a hero" trying to invent new architectures.
+
+
 
 ###Test a Model on New Images
 
