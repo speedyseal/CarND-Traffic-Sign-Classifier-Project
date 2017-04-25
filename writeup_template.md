@@ -84,7 +84,8 @@ To add more data to the the data set, I used Keras' image generation function to
 
 I use the randomly transformed images to augment each class independently until each of the classes has an equal total number of samples. The number of samples per class in the training set can be specified as a parameter.
 
-This image shows samples from the original set next to samples from the augmented set.
+This image shows samples from the original set next to samples from the augmented set. Notice random shear and rotation transformations as well as zooms and shifts.
+
 ![alt text][stopaugmented]
 
 The difference between the original data set and the augmented data set is illustrated in the following histogram showing that all classes have more or less the same number of samples each.
@@ -158,13 +159,13 @@ Here are the results of the prediction:
 | Speed limit 70km/h	| General caution      						|
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. The quality of speed signs data in the training set may be quite noisy, therefore the classifier may have been unable to find separation between the classes and instead sees the red circle outline, interpreting it as general caution.
+The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%.
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
 The code for making predictions on my final model is located in the 25th cell of the Ipython notebook.
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+For the first image, the model is very confident that this is a children crossing sign. The top five soft max probabilities were
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
@@ -174,7 +175,7 @@ For the first image, the model is relatively sure that this is a stop sign (prob
 | .0	      			| Dangerous curve to right		 				|
 | .0				    | Road narrows on right      					|
 
-For the second image, it somehow got very confused. The distorted circle looks more like an oval and the classifier is matching it more towards triangular signs than circular signs.
+For the second image, it somehow got very confused. The distorted circle looks more like an oval and the classifier is matching it more towards triangular signs than circular signs. Perhaps the diagonal shapes in the image are being interpreted as being similar to the diagonal lines of a triangular sign.
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
