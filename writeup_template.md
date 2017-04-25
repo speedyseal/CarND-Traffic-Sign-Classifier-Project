@@ -1,11 +1,5 @@
 #**Traffic Sign Recognition** 
 
-##Writeup Template
-
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
----
-
 **Build a Traffic Sign Recognition Project**
 
 The goals / steps of this project are the following:
@@ -19,14 +13,21 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+[traininghist]: ./p2img/traininghist.png "Training set histogram"
+[validhist]: ./p2img/validhist.png "Validation set histogram"
+[testhist]: ./p2img/testhist.png "Test set histogram"
+[postbalancehist]: ./p2img/postbalancehist.png "Training set histogram after balancing"
+[stoppreprocessed]: ./p2img/stoppreprocessed.png "Preprocessed stop sign from original set"
+[stopaugmented]: ./p2img/stopaugmented.png "Stop sign from augmented set showing zoom and rotation"
+
+
+[image4]: ./webimages/c22.png "Bumpy road"
+[image5]: ./webimages/c28.png "Children crossing"
+[image6]: ./webimages/c35.png "Ahead only"
+[image7]: ./webimages/c38.png "Keep right"
+[image8]: ./webimages/c4.png "Speed limit 70km/h"
+
+[confusionmatrix]: ./p2img/confusionmatrix.png "Confusion matrix"
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -36,7 +37,7 @@ The goals / steps of this project are the following:
 
 ####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
 
-You're reading it! and here is a link to my [project code](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
+My [project code](https://github.com/speedyseal/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier-HSV-balance-tuneL2.ipynb) is available on github at the link.
 
 ###Data Set Summary & Exploration
 
@@ -45,15 +46,15 @@ You're reading it! and here is a link to my [project code](https://github.com/ud
 I used the pandas library to calculate summary statistics of the traffic
 signs data set:
 
-* The size of training set is ?
-* The size of the validation set is ?
-* The size of test set is ?
-* The shape of a traffic sign image is ?
-* The number of unique classes/labels in the data set is ?
+* The size of training set is 34799
+* The size of the validation set is 4410
+* The size of test set is 12630
+* The shape of a traffic sign image is (32,32)
+* The number of unique classes/labels in the data set is 43
 
 ####2. Include an exploratory visualization of the dataset.
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+Here is an exploratory visualization of the data set. Plotted here are the class histograms for the training, validation, and test sets showing the disparity between class frequencies. Classes with greater representation will have a greater weight in training unless the frequency is balanced across classes. There are various techniques to deal with this. [http://www.ele.uri.edu/faculty/he/PDFfiles/ImbalancedLearning.pdf](http://www.ele.uri.edu/faculty/he/PDFfiles/ImbalancedLearning.pdf)
 
 ![alt text][image1]
 
@@ -61,24 +62,35 @@ Here is an exploratory visualization of the data set. It is a bar chart showing 
 
 ####1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
 
-As a first step, I decided to convert the images to grayscale because ...
+I converted the images to HSV in a separate preprocessing step because doing it inline in a pipeline is too slow on my machine. This is loaded as new pickled data files.
 
-Here is an example of a traffic sign image before and after grayscaling.
+The preprocessing pipeline comprises the following steps:
+ - convert to HSV
+ - Equalize the histogram on the luminosity channel using cv2.equalizeHist(img[:,:,2])
+ - Normalize by subtracting 128 from each channel and dividing by 128 to center the 8 bit uint_8 value around 0 with a range of +/- 1
+ 
+I decided not to convert to grayscale because, unlike in the mnist test set which is color invariant, color is a part of the class feature for street signs. A stop sign that is green is not a valid stop sign on the street. Color helps to distinguish between classes and I think converting to grayscale throws some of these distinguishing features.
 
-![alt text][image2]
+As a last step, I normalized the image data because it improves convergence.
 
-As a last step, I normalized the image data because ...
+I decided to generate additional data because I have poor validation accuracy on the underrepresented classes and the gap between training and validation indicates that the convnet is overfitting to the existing training set.
 
-I decided to generate additional data because ... 
+To add more data to the the data set, I used Keras' image generation function to randomly
+ - rotate up to 10\deg
+ - skew up to 3\deg
+ - zoom up to 5%
+ - shift horizontally and vertically up to 10%
+ - randomly shift channel data by 2
 
-To add more data to the the data set, I used the following techniques because ... 
+I use the randomly transformed images to augment each class independently until each of the classes has an equal total number of samples. The number of samples per class in the training set can be specified as a parameter.
 
 Here is an example of an original image and an augmented image:
 
-![alt text][image3]
+![alt text][stoppreprocessed] ![alt text][stopaugmented]
 
-The difference between the original data set and the augmented data set is the following ... 
 
+The difference between the original data set and the augmented data set is illustrated in the following histogram showing that all classes have more or less the same number of samples each.
+![alt text][postbalancehist]
 
 ####2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
@@ -131,22 +143,28 @@ Here are five German traffic signs that I found on the web:
 ![alt text][image4] ![alt text][image5] ![alt text][image6] 
 ![alt text][image7] ![alt text][image8]
 
-The first image might be difficult to classify because ...
+These images may be difficult to classify because of parallax errors that aren't present in the training set, or backgrounds or shadowing that are different.
 
 ####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
 Here are the results of the prediction:
+[image4]: ./webimages/c22.png "Bumpy road"
+[image5]: ./webimages/c28.png "Children crossing"
+[image6]: ./webimages/c35.png "Ahead only"
+[image7]: ./webimages/c38.png "Keep right"
+[image8]: ./webimages/c4.png "Speed limit 70km/h"
+
 
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Bumpy road      		| Bumpy road   									| 
+| Children crossing     | Children crossing 							|
+| Ahead only			| Ahead only									|
+| Keep right      		| Keep right					 				|
+| Speed limit 70km/h	| Speed limit 70km/h      						|
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess 5 of the 5 traffic signs, which gives an accuracy of 100%. This is similar to the accuracy on the test set. The augmentation involving shear and rotations may have given enough training data to cover the examples found on the web.
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
@@ -156,16 +174,28 @@ For the first image, the model is relatively sure that this is a stop sign (prob
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
-
+| 1.00         			| Children crossing   							| 
+| .0     				| Right of way at next intersection 			|
+| .0					| Pedestrians									|
+| .0	      			| Dangerous curve to right		 				|
+| .0				    | Road narrows on right      					|
 
 For the second image ... 
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.00         			| Speed limit 70km/h   							| 
+| .0     				| Speed limit 30km/h 							|
+| .0					| Speed limit 30km/h							|
+| .0	      			| Dangerous curve to right		 				|
+| .0				    | Road narrows on right      					|
+
+
+####4. Confusion matrix
+Another standard metric for evaluating a classifier is the confusion matrix. Pandas_ml provides useful utilities to compute and plot the confusion matrix indicating which classes are mistakenly classfied as another.
+
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
 ####1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
 
-
+The activations of the first convolutional layer show what features are highlighted. Salient features that cause activations are the outlines of the signs, indicating some kind of edge detection filter learned by the convnet.
+It is difficult to interpret the activations of the second convolutional layer since they are essentially transpositions of the first convolutional layer, but there is a nonlinear pool operation stuck in between. To interpret them, one could convolve the filters of the first layer with the activations of the second layer to see what the activations map to in the original image domain.
