@@ -70,8 +70,8 @@ As a last step, I normalized the image data because it improves convergence.
 I decided to generate additional data because I have poor validation accuracy on the underrepresented classes and the gap between training and validation indicates that the convnet is overfitting to the existing training set.
 
 To add more data to the the data set, I used Keras' image generation function to randomly
- - rotate up to 10\deg
- - skew up to 3\deg
+ - rotate up to 10$\text{\textdegree}$
+ - skew up to 3$\text{\textdegree}$
  - zoom up to 5%
  - shift horizontally and vertically up to 10%
  - randomly shift channel data by 2
